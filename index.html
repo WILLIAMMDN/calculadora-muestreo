@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Muestreo</title>
+
+    <style>
+        /* --- Configuración General --- */
+        :root {
+            --color-primario: #0078d7;
+            --color-secundario: #28a745;
+            --color-fondo: #f0f4f7;
+            --color-fondo-app: #ffffff;
+            --color-texto: #333333;
+            --color-borde: #cccccc;
+            --fuente-principal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--fuente-principal);
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--color-fondo-app);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid var(--color-borde);
+        }
+
+        /* --- Contenido de las Páginas --- */
+        .page {
+            display: none; /* Ocultas por defecto */
+            padding: 25px;
+        }
+
+        .page.active {
+            display: block; /* Visible solo si es la activa */
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--color-primario);
+            border-bottom: 2px solid var(--color-fondo);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        /* === ¡NUEVOS ESTILOS PARA EL MENÚ DE INICIO! === */
+
+        #page-inicio h2 {
+            font-size: 2rem;
+            text-align: center;
+            border-bottom: none;
+            color: var(--color-texto);
+        }
+        
+        #page-inicio .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 30px;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2x2 Grid */
+            gap: 20px;
+        }
+
+        .menu-card {
+            background-color: #fcfcfc;
+            border: 1px solid var(--color-borde);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.07);
+            border-color: var(--color-primario);
+        }
+
+        .menu-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .menu-card h3 {
+            font-size: 1.2rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+        }
+
+        .menu-card p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        /* Botón para Volver al Menú */
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--color-primario);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding: 5px;
+        }
+        .btn-back:hover {
+            text-decoration: underline;
+        }
+        /* ============================================= */
+
+
+        /* --- Estilos de Formularios (Inputs, Botones, Fieldset) --- */
+        fieldset {
+            border: 1px solid var(--color-borde);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+
+        legend {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-texto);
+            padding: 0 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            flex: 0 0 200px;
+            font-weight: 600;
+            padding-right: 15px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--color-borde);
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: var(--fuente-principal);
+            min-width: 100px;
+        }
+        
+        .form-group textarea {
+             resize: vertical;
+        }
+
+        .form-group input[type="radio"] {
+            margin-right: 8px;
+        }
+        
+        .form-group .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        button.btn-calcular, button.btn-generar {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: white;
+            background-color: var(--color-secundario);
+            margin-top: 10px;
+        }
+        
+        button.btn-calcular:hover, button.btn-generar:hover {
+            opacity: 0.85;
+        }
+
+        button.btn-accion {
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: var(--color-primario);
+            margin-top: 5px;
+        }
+        button.btn-accion:hover {
+            opacity: 0.85;
+        }
+
+        /* --- Áreas de Resultados y Visualización --- */
+        .resultado-box,
+        textarea.display-box {
+            background-color: var(--color-fondo);
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+        
+        textarea.display-box {
+            width: 100%;
+            box-sizing: border-box; 
+            resize: vertical;
+        }
+        
+        #resultado-aleatorio-n {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--color-secundario);
+            text-align: center;
+        }
+        
+        #resultado-aleatorio-exacto {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        #estratos-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        #estratos-container .form-group {
+            margin-bottom: 0;
+        }
+        
+        #estratos-container .form-group label {
+             flex-basis: 150px;
+        }
+
+        /* --- CSS Para Fórmula en Tiempo Real (Aleatorio) --- */
+        .formula-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid var(--color-borde);
+            border-radius: 5px;
+        }
+        .formula-n {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-right: 15px;
+            color: var(--color-texto);
+        }
+        .formula-fraction {
+            display: inline-block;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.1rem;
+            color: #222;
+        }
+        .formula-fraction hr {
+            margin: 2px 0;
+            border: none;
+            border-top: 2px solid var(--color-texto);
+        }
+        #formula-numerador,
+        #formula-denominador {
+            display: block;
+            text-align: center;
+            padding: 5px 10px;
+            letter-spacing: 1px;
+        }
+        
+        /* === Estilos PÁGINA SISTEMÁTICA === */
+        
+        .form-group-horizontal {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+        .form-group-horizontal .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .form-group-horizontal .form-group label {
+            flex: 0 0 80px;
+        }
+
+        .summary-box {
+            background-color: var(--color-fondo);
+            border-left: 4px solid var(--color-primario);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        .summary-box p {
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .error-box {
+            background-color: #fff0f0;
+            border-left: 4px solid #d93025;
+            color: #d93025;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .results-list-box ol {
+            list-style: none;
+            counter-reset: sample-counter;
+            padding-left: 0;
+        }
+        
+        .results-list-box li {
+            counter-increment: sample-counter;
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 50px;
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.4;
+        }
+
+        .results-list-box li::before {
+            content: counter(sample-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-secundario);
+            color: white;
+            font-weight: 600;
+            border-radius: 5px 0 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <section id="page-inicio" class="page active">
+            <h2>Calculadora de Muestreo</h2>
+            <p class="subtitle">Selecciona un método para comenzar</p>
+            
+            <div class="menu-container">
+                <div class="menu-card" onclick="showPage('page-aleatorio')">
+                    <span class="menu-icon">🎲</span>
+                    <h3>M. Aleatorio Simple</h3>
+                    <p>Calcula 'n' para poblaciones finitas o infinitas.</p>
+                </div>
+                
+                <div class="menu-card" onclick="showPage('page-estratificado')">
+                    <span class="menu-icon">📊</span>
+                    <h3>M. Estratificado</h3>
+                    <p>Calcula 'n' y lo distribuye proporcionalmente por estratos.</p>
+                </div>
+                
+                <div class="menu-card" onclick="showPage('page-conglomerados')">
+                    <span class="menu-icon">🌍</span>
+                    <h3>M. por Conglomerados</h3>
+                    <p>Selecciona grupos enteros (clusters) al azar de una población.</p>
+                </div>
+                
+                <div class="menu-card" onclick="showPage('page-sistematico')">
+                    <span class="menu-icon">📉</span>
+                    <h3>M. Sistemático</h3>
+                    <p>Elige elementos de una lista usando un intervalo fijo 'k'.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-aleatorio" class="page">
+            <button class="btn-back" onclick="showPage('page-inicio')">← Volver al Menú</button>
+            <h2>Muestreo Aleatorio Simple</h2>
+            
+            <fieldset>
+                <legend>1. Tipo de Población</legend>
+                <div class="form-group">
+                    <div class="radio-group">
+                        <label><input type="radio" name="tipo_poblacion" value="finita" onchange="togglePoblacionN()" checked> Finita</label>
+                        <label><input type="radio" name="tipo_poblacion" value="infinita" onchange="togglePoblacionN()"> Infinita</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>2. Parámetros</legend>
+                <div class="form-group" id="grupo_n_poblacion">
+                    <label for="aleatorio_N">Población (N):</label>
+                    <input type="number" id="aleatorio_N" placeholder="Ej: 1200" value="1200" oninput="updateFormulaDisplay()">
+                </div>
+                <div class="form-group">
+                    <label for="aleatorio_confianza">Nivel de Confianza (%):</label>
+                    <input type="number" id="aleatorio_confianza" placeholder="Ej: 95" value="95" oninput="updateFormulaDisplay()">
+                </div>
+                <div class="form-group">
+                    <label for="aleatorio_p">Proporción (p):</label>
+                    <input type="number" id="aleatorio_p" placeholder="Dejar vacío para 0.5" value="0.5" oninput="updateFormulaDisplay()">
+                </div>
+                <div class="form-group">
+                    <label for="aleatorio_error">Error muestral (e):</label>
+                    <input type="number" id="aleatorio_error" placeholder="Ej: 0.05 para 5%" value="0.05" oninput="updateFormulaDisplay()">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Fórmula en Tiempo Real</legend>
+                <div class="formula-visualizer">
+                    <span class="formula-n">n =</span>
+                    <div class="formula-fraction">
+                        <span id="formula-numerador">Cargando...</span>
+                        <hr>
+                        <span id="formula-denominador">Cargando...</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <button class="btn-calcular" onclick="calcularAleatorio()">Calcular Muestra</button>
+
+            <fieldset>
+                <legend>3. Resultado</legend>
+                <div class="resultado-box">
+                    <div id="resultado-aleatorio-n">n = ?</div>
+                    <div id="resultado-aleatorio-exacto">Tamaño exacto: 0.00</div>
+                </div>
+            </fieldset>
+        </section>
+
+        <section id="page-estratificado" class="page">
+            <button class="btn-back" onclick="showPage('page-inicio')">← Volver al Menú</button>
+            <h2>Muestreo Estratificado</h2>
+
+            <fieldset>
+                <legend>1. Parámetros Comunes</legend>
+                <div class="form-group">
+                    <label for="estrat_N">Población Total (N):</label>
+                    <input type="number" id="estrat_N" placeholder="Suma de todos los estratos">
+                </div>
+                <div class="form-group">
+                    <label for="estrat_confianza">Nivel de Confianza (%):</label>
+                    <input type="number" id="estrat_confianza" placeholder="Ej: 95" value="95">
+                </div>
+                <div class="form-group">
+                    <label for="estrat_p">Proporción (p):</label>
+                    <input type="number" id="estrat_p" placeholder="Dejar vacío para 0.5" value="0.5">
+                </div>
+                <div class="form-group">
+                    <label for="estrat_error">Error muestral (e):</label>
+                    <input type="number" id="estrat_error" placeholder="Ej: 0.05" value="0.05">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>2. Definición de Estratos</legend>
+                <div class="form-group">
+                    <label for="estrat_num_estratos">Número de Estratos:</label>
+                    <input type="number" id="estrat_num_estratos" min="1" value="2">
+                </div>
+                <button class="btn-accion" onclick="generarCamposEstratos()">Generar Campos de Estratos</button>
+                <div id="estratos-container">
+                    </div>
+            </fieldset>
+
+            <button class="btn-calcular" onclick="calcularEstratificado()">Calcular Muestra Estratificada</button>
+
+            <fieldset>
+                <legend>3. Resultados</legend>
+                <div id="resultado-estratificado" class="resultado-box">
+                    Aguardando cálculo...
+                </div>
+            </fieldset>
+        </section>
+
+        <section id="page-conglomerados" class="page">
+            <button class="btn-back" onclick="showPage('page-inicio')">← Volver al Menú</button>
+            <h2>Muestreo por Conglomerados</h2>
+
+            <fieldset>
+                <legend>1. Definir Población</legend>
+                <div class="form-group">
+                    <label for="cluster_name">Nombre del Conglomerado:</label>
+                    <input type="text" id="cluster_name" placeholder="Ej: Sector E">
+                </div>
+                <div class="form-group">
+                    <label for="cluster_members">Miembros (separados por coma):</label>
+                    <input type="text" id="cluster_members" placeholder="Ej: Individuo E1, Individuo E2">
+                </div>
+                <button class="btn-accion" onclick="addCluster()">Añadir Conglomerado</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Población Actual (Con datos de ejemplo)</legend>
+                <textarea id="population_display" class="display-box" readonly rows="8">Aún no se han añadido conglomerados.</textarea>
+            </fieldset>
+            
+            <fieldset>
+                <legend>2. Realizar Muestreo</legend>
+                 <div class="form-group">
+                    <label for="num_to_sample">Número de conglomerados a seleccionar:</label>
+                    <input type="number" id="num_to_sample" min="1" value="2">
+                </div>
+                <button class="btn-calcular" onclick="performSampling()">Realizar Muestreo</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>3. Resultados</legend>
+                <textarea id="results_display" class="display-box" readonly rows="8">Los resultados aparecerán aquí.</textarea>
+            </fieldset>
+        </section>
+        
+        <section id="page-sistematico" class="page">
+            <button class="btn-back" onclick="showPage('page-inicio')">← Volver al Menú</button>
+            <h2>Muestreo Sistemático 📊</h2>
+
+            <fieldset>
+                <legend>1. Generador de Población Numérica</legend>
+                <div class="form-group">
+                    <label for="sist_prefix-input">Prefijo (Opcional):</label>
+                    <input type="text" id="sist_prefix-input" placeholder="Ej: Persona">
+                </div>
+                <div class="form-group-horizontal"> 
+                    <div class="form-group">
+                        <label for="sist_range-start">Desde:</label>
+                        <input type="number" id="sist_range-start" placeholder="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="sist_range-end">Hasta:</label>
+                        <input type="number" id="sist_range-end" placeholder="40" value="40">
+                    </div>
+                </div>
+                <button id="sist_generate-list-btn" class="btn-accion">Generar Lista</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>2. Parámetros de Muestreo</legend>
+                <div class="form-group">
+                    <label for="sist_population-data">Población (un elemento por línea):</label>
+                    <textarea id="sist_population-data" rows="8" placeholder="La lista generada aparecerá aquí..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sist_sample-size">Tamaño de la Muestra (n):</label>
+                    <input type="number" id="sist_sample-size" placeholder="Ej: 10" value="10">
+                </div>
+                <div class="form-group">
+                    <label for="sist_start-point">Punto de Inicio (Opcional):</label>
+                    <input type="number" id="sist_start-point" placeholder="Deja vacío para un inicio aleatorio">
+                </div>
+            </fieldset>
+            
+            <button id="sist_calculate-btn" class="btn-calcular">Calcular Muestra Sistemática</button>
+            
+            <fieldset>
+                <legend>3. Resultados</legend>
+                <div id="sist_error-message" class="error-box"></div>
+                <div id="sist_summary" class="summary-box"></div>
+                <h3>Muestra Obtenida:</h3>
+                <div id="sist_sample-results" class="results-list-box"></div>
+            </fieldset>
+        </section>
+
+    </div> <script>
+
+        // --- LÓGICA DE NAVEGACIÓN ---
+        
+        function showPage(pageId) {
+            // Ocultar todas las páginas
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Mostrar la página seleccionada
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // --- LÓGICA COMÚN DE CÁLCULO (Equivalente a Scipy) ---
+
+        function invNormCdf(p) {
+            const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+            const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+            const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+            const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+            if (p <= 0 || p >= 1) return NaN;
+            if (p < 0.02425) {
+                let q = Math.sqrt(-2 * Math.log(p));
+                return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            } else if (p > 0.97575) {
+                let q = Math.sqrt(-2 * Math.log(1 - p));
+                return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            } else {
+                let q = p - 0.5;
+                let r = q * q;
+                return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+            }
+        }
+        
+        function getZScore(confianza) {
+            if (confianza <= 0 || confianza >= 100) {
+                throw new Error("La confianza debe estar entre 0 y 100.");
+            }
+            const p_acumulada = 1 - (1 - (confianza / 100)) / 2;
+            return invNormCdf(p_acumulada);
+        }
+        
+
+        // --- PÁGINA 1: MUESTREO ALEATORIO SIMPLE ---
+        
+        function togglePoblacionN() {
+            const tipo = document.querySelector('input[name="tipo_poblacion"]:checked').value;
+            const grupoN = document.getElementById('grupo_n_poblacion');
+            
+            if (tipo === 'finita') {
+                grupoN.style.display = 'flex';
+            } else {
+                grupoN.style.display = 'none';
+            }
+            updateFormulaDisplay(); 
+        }
+
+        function updateFormulaDisplay() {
+            try {
+                const tipo = document.querySelector('input[name="tipo_poblacion"]:checked').value;
+                const N_val = document.getElementById('aleatorio_N').value;
+                const conf_val = parseFloat(document.getElementById('aleatorio_confianza').value);
+                const p_val = document.getElementById('aleatorio_p').value;
+                const e_val = document.getElementById('aleatorio_error').value;
+
+                const N = N_val || "N";
+                const p = p_val || "p";
+                const e = e_val || "e";
+                
+                let Z = "Z";
+                if (!isNaN(conf_val) && conf_val > 0 && conf_val < 100) {
+                    try { Z = getZScore(conf_val).toFixed(2); } catch (err) { }
+                }
+                
+                let q = "q";
+                try {
+                    let p_num = parseFloat(p);
+                    if (!isNaN(p_num) && p_num > 0 && p_num < 1) {
+                        q = (1 - p_num).toFixed(2);
+                    }
+                } catch (err) { }
+
+                const sup_2 = "²";
+                let num_text, den_text;
+
+                if (tipo === 'infinita') {
+                    num_text = `${Z}${sup_2} * ${p} * ${q}`;
+                    den_text = `${e}${sup_2}`;
+                } else {
+                    num_text = `${N} * ${Z}${sup_2} * ${p} * ${q}`;
+                    den_text = `(${N}-1)*${e}${sup_2} + ${Z}${sup_2}*${p}*${q}`;
+                }
+
+                document.getElementById('formula-numerador').textContent = num_text;
+                document.getElementById('formula-denominador').textContent = den_text;
+
+            } catch (e) {
+                console.error("Error updating formula display:", e);
+                document.getElementById('formula-numerador').textContent = "Error";
+                document.getElementById('formula-denominador').textContent = "Error";
+            }
+        }
+
+        function calcularAleatorio() {
+            try {
+                const tipo = document.querySelector('input[name="tipo_poblacion"]:checked').value;
+                const confianza = parseFloat(document.getElementById('aleatorio_confianza').value);
+                let p = parseFloat(document.getElementById('aleatorio_p').value);
+                const error = parseFloat(document.getElementById('aleatorio_error').value);
+                
+                if (isNaN(p)) p = 0.5;
+
+                if (isNaN(confianza) || isNaN(error)) {
+                    throw new Error("Confianza y Error no pueden estar vacíos.");
+                }
+                if (confianza <= 0 || confianza >= 100) throw new Error("La confianza debe estar entre 0 y 100.");
+                if (p <= 0 || p >= 1) throw new Error("La proporción (p) debe estar entre 0 y 1.");
+                if (error <= 0 || error >= 1) throw new Error("El error (e) debe estar entre 0 y 1.");
+
+                const z = getZScore(confianza);
+                const q = 1 - p;
+                
+                let n_exacto = 0;
+                let numerador = (z**2) * p * q;
+                let denominador = error**2;
+                
+                if (tipo === 'infinita') {
+                    n_exacto = numerador / denominador;
+                } else { 
+                    const N = parseInt(document.getElementById('aleatorio_N').value);
+                    if (isNaN(N) || N <= 0) {
+                        throw new Error("El tamaño de la población (N) debe ser un número positivo.");
+                    }
+                    numerador = N * numerador;
+                    denominador = ((N - 1) * denominador) + ((z**2) * p * q);
+                    n_exacto = numerador / denominador;
+                }
+                
+                const n_redondeado = Math.ceil(n_exacto);
+                
+                document.getElementById('resultado-aleatorio-n').textContent = `n = ${n_redondeado}`;
+                document.getElementById('resultado-aleatorio-exacto').textContent = `Tamaño exacto: ${n_exacto.toFixed(4)}`;
+
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+                document.getElementById('resultado-aleatorio-n').textContent = `n = ?`;
+                document.getElementById('resultado-aleatorio-exacto').textContent = `Error en el cálculo`;
+            }
+        }
+
+        // --- PÁGINA 2: MUESTREO ESTRATIFICADO ---
+
+        function generarCamposEstratos() {
+            try {
+                const numEstratos = parseInt(document.getElementById('estrat_num_estratos').value);
+                if (isNaN(numEstratos) || numEstratos <= 0) {
+                    throw new Error("El número de estratos debe ser mayor que cero.");
+                }
+                
+                const container = document.getElementById('estratos-container');
+                container.innerHTML = ''; 
+                
+                for (let i = 1; i <= numEstratos; i++) {
+                    const group = document.createElement('div');
+                    group.className = 'form-group';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `estrato_N${i}`;
+                    label.textContent = `Tamaño Estrato ${i} (N${i}):`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.id = `estrato_N${i}`;
+                    input.className = 'estrato-nh-input';
+                    input.placeholder = `N${i}`;
+                    
+                    group.appendChild(label);
+                    group.appendChild(input);
+                    container.appendChild(group);
+                }
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+        
+        function calcularEstratificado() {
+            const resultadoDiv = document.getElementById('resultado-estratificado');
+            try {
+                const N_total = parseInt(document.getElementById('estrat_N').value);
+                const confianza = parseFloat(document.getElementById('estrat_confianza').value);
+                let p = parseFloat(document.getElementById('estrat_p').value);
+                const error = parseFloat(document.getElementById('estrat_error').value);
+
+                if (isNaN(p)) p = 0.5;
+
+                if (isNaN(N_total) || N_total <= 0) throw new Error("La Población Total (N) debe ser válida.");
+                if (isNaN(confianza) || isNaN(error)) throw new Error("Confianza y Error no pueden estar vacíos.");
+                if (confianza <= 0 || confianza >= 100) throw new Error("La confianza debe estar entre 0 y 100.");
+                if (p <= 0 || p >= 1) throw new Error("La proporción (p) debe estar entre 0 y 1.");
+                if (error <= 0 || error >= 1) throw new Error("El error (e) debe estar entre 0 y 1.");
+
+                const z = getZScore(confianza);
+                const q = 1 - p;
+                const n_total_exacto = (N_total * (z**2) * p * q) / (((N_total - 1) * (error**2)) + ((z**2) * p * q));
+                const n_total_redondeado = Math.ceil(n_total_exacto);
+
+                let resultados_html = `<strong>Tamaño total de muestra (n): ${n_total_redondeado}</strong> (Exacto: ${n_total_exacto.toFixed(2)})\n`;
+                resultados_html += "--------------------------------------\n";
+                resultados_html += "<strong>Distribución por estrato (Afijación Proporcional):</strong>\n\n";
+
+                const inputsEstratos = document.querySelectorAll('.estrato-nh-input');
+                if (inputsEstratos.length === 0) {
+                    throw new Error("Primero debes 'Generar Campos de Estratos' e ingresar los tamaños.");
+                }
+                
+                let suma_Nh = 0;
+                let n_total_recalculado_redondeado = 0;
+
+                inputsEstratos.forEach((input, index) => {
+                    const Nh = parseInt(input.value);
+                    if (isNaN(Nh) || Nh <= 0) {
+                        throw new Error(`El tamaño del Estrato ${index + 1} no es válido.`);
+                    }
+                    suma_Nh += Nh;
+                    
+                    const nh_exacto = (Nh / N_total) * n_total_exacto;
+                    const nh_redondeado = Math.ceil(nh_exacto);
+                    n_total_recalculado_redondeado += nh_redondeado;
+
+                    resultados_html += `Estrato ${index + 1}: N${index + 1}=${Nh} → n${index + 1} = ${nh_exacto.toFixed(2)} (≈ ${nh_redondeado})\n`;
+                });
+
+                if (suma_Nh !== N_total) {
+                    resultados_html += `\n⚠️ AVISO: La suma de los estratos (${suma_Nh}) no coincide con N=${N_total}. Los cálculos se basaron en N=${N_total}.\n`;
+                }
+                
+                resultados_html += `\nSuma de muestras redondeadas: ${n_total_recalculado_redondeado}`;
+                resultadoDiv.textContent = resultados_html;
+
+            } catch (e) {
+                resultadoDiv.textContent = `Error: ${e.message}`;
+                alert(`Error: ${e.message}`);
+            }
+        }
+
+
+        // --- PÁGINA 3: MUESTREO POR CONGLOMERADOS ---
+        
+        let poblacion_conglomerados = {
+            "Sector A": ["Individuo A1", "Individuo A2", "Individuo A3", "Individuo A4"],
+            "Sector B": ["Individuo B1", "Individuo B2", "Individuo B3"],
+            "Sector C": ["Individuo C1", "Individuo C2", "Individuo C3", "Individuo C4", "Individuo C5"],
+            "Sector D": ["Individuo D1", "Individuo D2"]
+        };
+
+        function addCluster() {
+            try {
+                const nameInput = document.getElementById('cluster_name');
+                const membersInput = document.getElementById('cluster_members');
+                
+                const clusterName = nameInput.value.trim();
+                const membersStr = membersInput.value.trim();
+                
+                if (!clusterName || !membersStr) {
+                    throw new Error("Por favor, ingrese el nombre y los miembros del conglomerado.");
+                }
+                
+                const members = membersStr.split(',').map(m => m.trim()).filter(Boolean);
+                
+                if (members.length === 0) {
+                    throw new Error("No se ingresaron miembros válidos.");
+                }
+                
+                poblacion_conglomerados[clusterName] = members;
+                updatePopulationDisplay();
+                nameInput.value = '';
+                membersInput.value = '';
+                nameInput.focus();
+                
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+        
+        function updatePopulationDisplay() {
+            const display = document.getElementById('population_display');
+            const numToSampleInput = document.getElementById('num_to_sample');
+            const numClusters = Object.keys(poblacion_conglomerados).length;
+
+            if (numClusters === 0) {
+                display.value = "Aún no se han añadido conglomerados.";
+                numToSampleInput.max = 1;
+                numToSampleInput.value = 1;
+                return;
+            }
+            
+            let display_text = "";
+            let total_individuos = 0;
+            
+            for (const [name, members] of Object.entries(poblacion_conglomerados)) {
+                display_text += `▶ ${name} (${members.length} miembros): ${members.join(', ')}\n`;
+                total_individuos += members.length;
+            }
+            
+            const header = `Población Total: ${total_individuos} individuos en ${numClusters} conglomerados.\n` + "=".repeat(50) + "\n";
+            display.value = header + display_text;
+            
+            numToSampleInput.max = numClusters;
+            if (parseInt(numToSampleInput.value) > numClusters) {
+                numToSampleInput.value = numClusters;
+            }
+             if (parseInt(numToSampleInput.value) <= 0) {
+                numToSampleInput.value = 1;
+            }
+        }
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function performSampling() {
+            const resultsDisplay = document.getElementById('results_display');
+            try {
+                const num_to_select = parseInt(document.getElementById('num_to_sample').value);
+                const nombres_conglomerados = Object.keys(poblacion_conglomerados);
+                const total_clusters = nombres_conglomerados.length;
+                
+                if (total_clusters === 0) {
+                     throw new Error("La población está vacía. Añade conglomerados primero.");
+                }
+
+                if (isNaN(num_to_select) || !(num_to_select > 0 && num_to_select <= total_clusters)) {
+                    throw new Error(`El número a seleccionar (${num_to_select}) debe ser entre 1 y el total de conglomerados (${total_clusters}).`);
+                }
+                
+                const conglomerados_barajados = shuffleArray([...nombres_conglomerados]);
+                const conglomerados_seleccionados = conglomerados_barajados.slice(0, num_to_select);
+                
+                let muestra_final = [];
+                for (const clusterName of conglomerados_seleccionados) {
+                    muestra_final.push(...poblacion_conglomerados[clusterName]);
+                }
+                
+                let resultado_texto = `CONGLOMERADOS SELECCIONADOS (${conglomerados_seleccionados.length}):\n`;
+                resultado_texto += "--------------------------------------\n";
+                resultado_texto += conglomerados_seleccionados.join("\n");
+                resultado_texto += `\n\nMUESTRA FINAL OBTENIDA (${muestra_final.length} individuos):\n`;
+                resultado_texto += "--------------------------------------\n";
+                resultado_texto += muestra_final.join(", ");
+                
+                resultsDisplay.value = resultado_texto;
+
+            } catch (e) {
+                resultsDisplay.value = `Error: ${e.message}`;
+                alert(`Error: ${e.message}`);
+            }
+        }
+        
+        // --- PÁGINA 4: MUESTREO SISTEMÁTICO ---
+        
+        function setupSystematicSampling() {
+            const generateListBtn = document.getElementById('sist_generate-list-btn');
+            const prefixInput = document.getElementById('sist_prefix-input');
+            const rangeStartInput = document.getElementById('sist_range-start');
+            const rangeEndInput = document.getElementById('sist_range-end');
+
+            const calculateBtn = document.getElementById('sist_calculate-btn');
+            const populationDataInput = document.getElementById('sist_population-data');
+            const sampleSizeInput = document.getElementById('sist_sample-size');
+            const startPointInput = document.getElementById('sist_start-point');
+            const summaryDiv = document.getElementById('sist_summary');
+            const resultsDiv = document.getElementById('sist_sample-results');
+            const errorDiv = document.getElementById('sist_error-message');
+
+            generateListBtn.addEventListener('click', () => {
+                const prefix = prefixInput.value.trim();
+                const start = parseInt(rangeStartInput.value, 10);
+                const end = parseInt(rangeEndInput.value, 10);
+
+                if (isNaN(start) || isNaN(end) || start > end) {
+                    alert('Por favor, introduce un rango numérico válido (ej. Desde 1 Hasta 40).');
+                    return;
+                }
+
+                const generatedPopulation = [];
+                for (let i = start; i <= end; i++) {
+                    const item = prefix ? `${prefix} ${i}` : i.toString();
+                    generatedPopulation.push(item);
+                }
+                populationDataInput.value = generatedPopulation.join('\n');
+            });
+
+            calculateBtn.addEventListener('click', () => {
+                summaryDiv.innerHTML = '';
+                resultsDiv.innerHTML = '';
+                errorDiv.textContent = '';
+                errorDiv.style.display = 'none';
+
+                try {
+                    const populationText = populationDataInput.value.trim();
+                    const sampleSize = parseInt(sampleSizeInput.value, 10);
+                    const userStartPoint = startPointInput.value;
+                    
+                    const population = populationText.split('\n').filter(item => item.trim() !== '');
+                    const populationSize = population.length;
+
+                    if (populationSize === 0) {
+                        throw new Error('La lista de la población no puede estar vacía.');
+                    }
+                    if (isNaN(sampleSize) || sampleSize <= 0) {
+                        throw new Error('El tamaño de la muestra debe ser un número mayor que cero.');
+                    }
+                    if (sampleSize > populationSize) {
+                        throw new Error('El tamaño de la muestra no puede ser mayor que el tamaño de la población.');
+                    }
+
+                    const interval = Math.floor(populationSize / sampleSize);
+                    
+                    if (interval === 0) {
+                         throw new Error('El intervalo (N/n) es menor que 1. Revisa los tamaños N y n.');
+                    }
+
+                    let startPoint;
+                    let startPointText;
+
+                    if (userStartPoint) {
+                        const parsedStart = parseInt(userStartPoint, 10);
+                        if (isNaN(parsedStart) || parsedStart <= 0 || parsedStart > interval) {
+                            throw new Error(`El punto de inicio debe ser un número entre 1 y ${interval} (el intervalo k).`);
+                        }
+                        startPoint = parsedStart - 1;
+                        startPointText = `Se usó el punto de inicio #${parsedStart} (seleccionado).`;
+                    } else {
+                        startPoint = Math.floor(Math.random() * interval);
+                        startPointText = `Se seleccionó el elemento #${startPoint + 1} de forma aleatoria (entre 1 y ${interval}).`;
+                    }
+                    
+                    const sample = [];
+                    for (let i = startPoint; i < populationSize; i += interval) {
+                        sample.push(population[i]);
+                    }
+
+                    summaryDiv.innerHTML = `
+                        <p><strong>Tamaño de la Población (N):</strong> ${populationSize}</p>
+                        <p><strong>Tamaño de Muestra (n):</strong> ${sampleSize} (solicitado)</p>
+                        <p><strong>Intervalo de Muestreo (k = N/n):</strong> ${interval}</p>
+                        <p><strong>Punto de Inicio:</strong> ${startPointText}</p>
+                        <p><strong>Muestra Obtenida:</strong> ${sample.length} elementos</p>
+                    `;
+
+                    let resultsHTML = '<ol>';
+                    sample.forEach(item => {
+                        resultsHTML += `<li>${item}</li>`;
+                    });
+                    resultsHTML += '</ol>';
+                    
+                    resultsDiv.innerHTML = resultsHTML;
+
+                } catch (e) {
+                    errorDiv.textContent = `Error: ${e.message}`;
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            // Generar lista de ejemplo al cargar
+            generateListBtn.click();
+        }
+        
+        
+        // --- INICIALIZACIÓN DE TODAS LAS PÁGINAS ---
+        
+        window.onload = () => {
+            showPage('page-inicio'); // ¡EMPEZAR EN EL NUEVO MENÚ!
+            
+            // Inicializar todas las calculadoras en segundo plano
+            updateFormulaDisplay(); 
+            generarCamposEstratos(); 
+            updatePopulationDisplay(); 
+            setupSystematicSampling(); 
+        };
+
+    </script>
+</body>
+</html>
