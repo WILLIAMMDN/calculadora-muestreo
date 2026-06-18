@@ -1,6 +1,6 @@
 # Calculadora de Muestreo
 
-Aplicacion web profesional para calcular y documentar muestras estadisticas. El proyecto fue reconstruido con Angular para separar la logica en servicios, modelos e interfaces reutilizables, dejando atras el archivo HTML monolitico original.
+Aplicacion web profesional para calcular y documentar muestras estadisticas. El proyecto fue construido con Angular para separar la logica en servicios, modelos e interfaces reutilizables.
 
 ![Angular](https://img.shields.io/badge/Angular-21.2-red?style=for-the-badge&logo=angular)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
