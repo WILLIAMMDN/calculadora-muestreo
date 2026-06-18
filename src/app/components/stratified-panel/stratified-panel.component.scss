@@ -1,0 +1,36 @@
+.strata-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.stratum-row {
+  display: grid;
+  grid-template-columns: 1fr 180px auto;
+  align-items: end;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 12px;
+}
+
+.allocations {
+  margin-top: 18px;
+}
+
+.error {
+  margin: 16px 0 0;
+}
+
+app-result-panel {
+  display: block;
+  margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+  .stratum-row {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,53 @@
+<main class="app-shell">
+  <header class="app-header">
+    <div>
+      <p class="overline">Herramienta estadistica</p>
+      <h1>Calculadora de Muestreo</h1>
+    </div>
+    <div class="header-mark" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <section class="workspace">
+    <aside class="sidebar" aria-label="Metodos">
+      <button
+        type="button"
+        class="method-tab"
+        *ngFor="let method of methods"
+        [class.active]="activeMethod === method.id"
+        (click)="setMethod(method.id)"
+      >
+        <span>{{ method.label }}</span>
+        <small>{{ method.caption }}</small>
+      </button>
+    </aside>
+
+    <div class="content">
+      <app-sample-size-panel
+        *ngIf="activeMethod === 'simple'"
+        (historyCreated)="addHistory($event)"
+      ></app-sample-size-panel>
+
+      <app-stratified-panel
+        *ngIf="activeMethod === 'stratified'"
+        (historyCreated)="addHistory($event)"
+      ></app-stratified-panel>
+
+      <app-cluster-panel
+        *ngIf="activeMethod === 'cluster'"
+        (historyCreated)="addHistory($event)"
+      ></app-cluster-panel>
+
+      <app-systematic-panel
+        *ngIf="activeMethod === 'systematic'"
+        (historyCreated)="addHistory($event)"
+      ></app-systematic-panel>
+    </div>
+
+    <app-history-panel [entries]="history" (cleared)="clearHistory()"></app-history-panel>
+  </section>
+</main>
+

@@ -1,0 +1,66 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2 class="section-title">Muestreo sistematico</h2>
+    <span class="pill">Intervalo k</span>
+  </div>
+
+  <div class="panel-body systematic-layout">
+    <form (ngSubmit)="generatePopulation()">
+      <div class="form-grid">
+        <div class="field">
+          <label for="prefix">Prefijo</label>
+          <input id="prefix" name="prefix" type="text" [(ngModel)]="prefix">
+        </div>
+        <div class="field">
+          <label for="range-start">Desde</label>
+          <input id="range-start" name="rangeStart" type="number" [(ngModel)]="rangeStart">
+        </div>
+        <div class="field">
+          <label for="range-end">Hasta</label>
+          <input id="range-end" name="rangeEnd" type="number" [(ngModel)]="rangeEnd">
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="btn btn-secondary" type="submit">Generar lista</button>
+      </div>
+    </form>
+
+    <form (ngSubmit)="calculate()" class="systematic-form">
+      <div class="field">
+        <label for="population-text">Poblacion</label>
+        <textarea id="population-text" name="populationText" [(ngModel)]="populationText"></textarea>
+      </div>
+
+      <div class="form-grid two">
+        <div class="field">
+          <label for="sample-size">Tamano de muestra</label>
+          <input id="sample-size" name="sampleSize" type="number" min="1" [(ngModel)]="sampleSize">
+        </div>
+        <div class="field">
+          <label for="start-position">Inicio</label>
+          <input id="start-position" name="startPosition" type="number" min="1" [(ngModel)]="startPosition">
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn btn-primary" type="submit">Calcular</button>
+      </div>
+    </form>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <section class="systematic-result" *ngIf="result">
+      <dl>
+        <div *ngFor="let item of result.summary">
+          <dt>{{ item.label }}</dt>
+          <dd>{{ item.value }}</dd>
+        </div>
+      </dl>
+
+      <ol>
+        <li *ngFor="let item of result.sample">{{ item }}</li>
+      </ol>
+    </section>
+  </div>
+</section>
+

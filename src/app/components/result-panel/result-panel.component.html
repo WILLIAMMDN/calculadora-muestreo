@@ -1,0 +1,30 @@
+<section class="result" *ngIf="result">
+  <div class="result-main">
+    <span class="eyebrow">{{ title }}</span>
+    <strong>{{ result.sampleSize }}</strong>
+    <span>unidades</span>
+  </div>
+
+  <div class="result-details">
+    <div>
+      <span class="label">Valor exacto</span>
+      <strong>{{ result.exactSampleSize | number: '1.2-2' }}</strong>
+    </div>
+    <div>
+      <span class="label">Formula</span>
+      <strong>{{ result.formula }}</strong>
+    </div>
+  </div>
+
+  <dl class="summary-grid">
+    <div *ngFor="let item of result.summary">
+      <dt>{{ item.label }}</dt>
+      <dd>{{ item.value }}</dd>
+    </div>
+    <div *ngFor="let item of extraSummary">
+      <dt>{{ item.label }}</dt>
+      <dd>{{ item.value }}</dd>
+    </div>
+  </dl>
+</section>
+

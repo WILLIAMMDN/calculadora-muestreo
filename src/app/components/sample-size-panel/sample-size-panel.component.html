@@ -1,0 +1,78 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2 class="section-title">Tamano de muestra</h2>
+    <span class="pill">Aleatorio simple</span>
+  </div>
+
+  <div class="panel-body">
+    <form (ngSubmit)="calculate()" class="sample-form">
+      <div class="form-grid">
+        <div class="field">
+          <label for="population-type">Poblacion</label>
+          <select id="population-type" name="populationType" [(ngModel)]="populationType">
+            <option value="finite">Finita</option>
+            <option value="infinite">Infinita</option>
+          </select>
+        </div>
+
+        <div class="field" *ngIf="populationType === 'finite'">
+          <label for="population">Total N</label>
+          <input
+            id="population"
+            name="population"
+            type="number"
+            min="2"
+            [(ngModel)]="population"
+          >
+        </div>
+
+        <div class="field">
+          <label for="confidence">Confianza</label>
+          <select id="confidence" name="confidence" [(ngModel)]="confidence">
+            <option [ngValue]="90">90%</option>
+            <option [ngValue]="95">95%</option>
+            <option [ngValue]="98">98%</option>
+            <option [ngValue]="99">99%</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="proportion">Proporcion p</label>
+          <input
+            id="proportion"
+            name="proportion"
+            type="number"
+            min="1"
+            max="99"
+            step="0.1"
+            [(ngModel)]="proportion"
+          >
+        </div>
+
+        <div class="field">
+          <label for="margin-error">Error e</label>
+          <input
+            id="margin-error"
+            name="marginError"
+            type="number"
+            min="0.1"
+            max="30"
+            step="0.1"
+            [(ngModel)]="marginError"
+          >
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn btn-primary" type="submit">Calcular</button>
+        <button class="btn btn-ghost" type="button" (click)="population = 1200; confidence = 95; proportion = 50; marginError = 5; populationType = 'finite'; result = null">
+          Restaurar
+        </button>
+      </div>
+    </form>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <app-result-panel [result]="result" title="Muestra recomendada"></app-result-panel>
+  </div>
+</section>
+

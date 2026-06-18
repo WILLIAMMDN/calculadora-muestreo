@@ -1,0 +1,30 @@
+<section class="panel history-panel">
+  <div class="panel-header">
+    <h2 class="section-title">Historial</h2>
+    <button class="btn btn-ghost" type="button" (click)="cleared.emit()" [disabled]="!entries.length">
+      Limpiar
+    </button>
+  </div>
+
+  <div class="panel-body">
+    <p class="empty" *ngIf="!entries.length">Sin calculos guardados.</p>
+
+    <table class="data-table" *ngIf="entries.length">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Metodo</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of entries">
+          <td>{{ entry.createdAt | date: 'short' }}</td>
+          <td>{{ entry.label }}</td>
+          <td>{{ entry.result }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+

@@ -1,0 +1,72 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2 class="section-title">Muestreo por conglomerados</h2>
+    <span class="pill">Seleccion aleatoria</span>
+  </div>
+
+  <div class="panel-body cluster-layout">
+    <form class="cluster-form" (ngSubmit)="addCluster()">
+      <div class="form-grid two">
+        <div class="field">
+          <label for="cluster-name">Conglomerado</label>
+          <input id="cluster-name" name="clusterName" type="text" [(ngModel)]="clusterName">
+        </div>
+        <div class="field">
+          <label for="cluster-members">Integrantes</label>
+          <input id="cluster-members" name="clusterMembers" type="text" [(ngModel)]="clusterMembers">
+        </div>
+      </div>
+      <div class="button-row compact">
+        <button class="btn btn-secondary" type="submit">Agregar</button>
+      </div>
+    </form>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Conglomerado</th>
+          <th>Integrantes</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cluster of clusters">
+          <td>{{ cluster.name }}</td>
+          <td>{{ cluster.members.join(', ') }}</td>
+          <td>
+            <button class="link-button" type="button" (click)="removeCluster(cluster.id)">Quitar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form (ngSubmit)="calculate()">
+      <div class="field narrow">
+        <label for="clusters-to-select">A seleccionar</label>
+        <input id="clusters-to-select" name="clustersToSelect" type="number" min="1" [(ngModel)]="clustersToSelect">
+      </div>
+      <div class="button-row">
+        <button class="btn btn-primary" type="submit">Calcular</button>
+      </div>
+    </form>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <section class="cluster-result" *ngIf="result">
+      <dl>
+        <div *ngFor="let item of result.summary">
+          <dt>{{ item.label }}</dt>
+          <dd>{{ item.value }}</dd>
+        </div>
+      </dl>
+      <div class="selected">
+        <h3>Conglomerados seleccionados</h3>
+        <p>{{ selectedClusterNames }}</p>
+      </div>
+      <div class="selected">
+        <h3>Muestra final</h3>
+        <p>{{ finalSampleText }}</p>
+      </div>
+    </section>
+  </div>
+</section>

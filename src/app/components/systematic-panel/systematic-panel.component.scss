@@ -1,0 +1,64 @@
+.systematic-layout,
+.systematic-form {
+  display: grid;
+  gap: 18px;
+}
+
+.systematic-result {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(15, 118, 110, 0.24);
+  border-radius: 8px;
+  background: #f7fffd;
+  padding: 14px;
+}
+
+.systematic-result dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.systematic-result dl div {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  padding: 10px;
+}
+
+.systematic-result dt {
+  color: var(--ink-600);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.systematic-result dd {
+  margin: 5px 0 0;
+  font-weight: 900;
+}
+
+.systematic-result ol {
+  columns: 2;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  padding: 14px 14px 14px 34px;
+}
+
+.systematic-result li {
+  break-inside: avoid;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 760px) {
+  .systematic-result dl {
+    grid-template-columns: 1fr;
+  }
+
+  .systematic-result ol {
+    columns: 1;
+  }
+}
+
