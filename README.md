@@ -81,6 +81,12 @@ El resultado de produccion se genera en:
 dist/calculadora-muestreo/
 ```
 
+## Historial del proyecto
+
+El proyecto cuenta con un historial documentado de desarrollo, incluyendo commits reales desde octubre de 2025 y una reconstruccion posterior en Angular.
+
+Consulta [HISTORIAL.md](HISTORIAL.md) para ver la linea de tiempo del trabajo realizado.
+
 ## Formula principal
 
 Para poblacion infinita:
